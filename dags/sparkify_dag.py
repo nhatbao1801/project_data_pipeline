@@ -19,8 +19,10 @@ default_args = {
     'start_date': datetime.now(),
     'retries':3,
     'email_on_failure':False,
+    'email_on_retry': False,
     'retry_delay':timedelta(minutes=5),
-    'catchup': False
+    'catchup': False,
+    'depends_on_past': False
 }
 
 @dag(
@@ -56,7 +58,8 @@ def final_project():
         task_id='Load_songplays_fact_table',
         redshift_conn_id="redshift",
         table_name="songplays",
-        sql=sql_statement.SqlQueries.songplay_table_insert
+        sql=sql_statement.SqlQueries.songplay_table_insert,
+        append_optional=False
     )
 
     load_user_dimension_table = LoadDimensionOperator(
